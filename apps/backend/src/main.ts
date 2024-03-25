@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import cookieSession from 'cookie-session';
 import mongoose from 'mongoose';
 import AuthRouter from './routes/account';
+import QRouter from './routes/questions';
 
-// read environment variables from .env file. do this for the secret string
 dotenv.config();
 const PORT = process.env.PORT ?? 8000;
 const SECRET=process.env.SECRET ?? "secret";
@@ -31,10 +31,8 @@ app.use((req, res, next) => {
   next();
 });
 
-
 app.use('/api/account', AuthRouter);
-
-
+app.use('/questions', QRouter);
 
 // listen
 app.listen(PORT, () => {

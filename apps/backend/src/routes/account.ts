@@ -3,6 +3,7 @@ import z from 'zod';
 import { createUser } from '../lib/account';
 import { User } from '../models';
 import bcrypt from 'bcrypt';
+import { requireAuth } from '../middlewares/require-auth';
 
 
 const AuthRouter = express.Router();
@@ -48,7 +49,7 @@ AuthRouter.post('/login', async (req, res) => {
     }
   });
 
-  AuthRouter.post('/logout', async (req, res) => {
+  AuthRouter.post('/logout', requireAuth, async (req, res) => {
     req.session = null;
     res.status(200).send('Logout successful!');
   });
