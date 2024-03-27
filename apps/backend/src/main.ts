@@ -1,7 +1,9 @@
-import express from 'express';
-import dotenv from 'dotenv';
 import cookieSession from 'cookie-session';
+import dotenv from 'dotenv';
+import express from 'express';
 import mongoose from 'mongoose';
+import { errorHandler } from './middlewares/error-handling';
+import { requireAuth } from './middlewares/require-auth';
 import AuthRouter from './routes/account';
 import QRouter from './routes/questions';
 
@@ -27,12 +29,15 @@ app.use(
 
 //from class demo
 app.use((req, res, next) => {
+  // eslint-disable-next-line no-console
   console.log(req.session);
   next();
 });
 
 app.use('/api/account', AuthRouter);
 app.use('/questions', QRouter);
+app.use(requireAuth);
+app.use(errorHandler);
 
 // listen
 app.listen(PORT, () => {

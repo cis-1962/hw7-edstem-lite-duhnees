@@ -1,9 +1,10 @@
+import bcrypt from 'bcrypt';
 import express from 'express';
 import z from 'zod';
 import { createUser } from '../lib/account';
-import { User } from '../models';
-import bcrypt from 'bcrypt';
 import { requireAuth } from '../middlewares/require-auth';
+import { User } from '../models';
+import { throw400Error, throw500Error } from './error-functions';
 
 
 const AuthRouter = express.Router();
@@ -13,45 +14,63 @@ const signupSchema = z.object({
   password: z.string(),
 });
 
-AuthRouter.post('/signup', async (req, res) => {
+AuthRouter.post('/signup', async (req, res, next) => {
   const zodResult = signupSchema.safeParse(req.body);
   if (!zodResult.success) {
-    res.status(400).send('Invalid input!');
+    throw400Error('Invalid input!', req, res, next);
     return;
   }
 
-  const { username, password } = zodResult.data;
-  await createUser(username, password);
-
-  req.session!.user = username;
-  res.status(200).send('OK!');
-});
-
-AuthRouter.post('/login', async (req, res) => {
-    const zodResult = signupSchema.safeParse(req.body);
-    if (!zodResult.success) {
-      res.status(400).send('Invalid input!');
-      return;
-    }
-  
+  try {
     const { username, password } = zodResult.data;
     const user = await User.findOne({ username });
     if (user) {
-        const passwordCheck = await bcrypt.compare(password, user.password);
-        if (passwordCheck) {
-            req.session!.user = username;
-            res.status(200).send('Login successful!');
-        } else {
-            res.status(400).send('Invalid Password!');
-        }
-    } else {
-        res.status(400).send('User does not exist!');
+      throw400Error('User already exists!', req, res, next);
+      return;
+    }
+    await createUser(username, password);
+
+    req.session!.user = username;
+    res.status(200).send('OK!');
+  } catch(err) {
+      throw500Error(req, res, next);
+  }
+  
+});
+
+AuthRouter.post('/login', async (req, res, next) => {
+    const zodResult = signupSchema.safeParse(req.body);
+    if (!zodResult.success) {
+      throw400Error('Invalid input!', req, res, next);
+      return;
+    }
+
+    try {
+      const { username, password } = zodResult.data;
+      const user = await User.findOne({ username });
+      if (user) {
+          const passwordCheck = await bcrypt.compare(password, user.password);
+          if (passwordCheck) {
+              req.session!.user = username;
+              res.status(200).send('Login successful!');
+          } else {
+            throw400Error('Wrong password!', req, res, next);
+          }
+      } else {
+          throw400Error('User does not exist!', req, res, next);
+      }
+    } catch(err) {
+        throw500Error(req, res, next);     
     }
   });
 
-  AuthRouter.post('/logout', requireAuth, async (req, res) => {
+AuthRouter.post('/logout', requireAuth, async (req, res, next) => {
+  try {
     req.session = null;
     res.status(200).send('Logout successful!');
-  });
+  } catch (err) {
+      throw500Error(req, res, next);
+  }
+});
 
 export default AuthRouter;
