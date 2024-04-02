@@ -1,11 +1,16 @@
 import { useState } from "react";
 import TextInput from "../components/textInput";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+//import { useSignUp } from "../util/fucking-whatever";
+import { useSignUpLogin } from "../util/signup-login";
 
 
 export default function SignupPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+    //const signup = useSignUp();
+    const signupOrLogin = useSignUpLogin();
 
     return (
         <div>
@@ -25,7 +30,18 @@ export default function SignupPage() {
             <button
                 type="button"
                 className="btn bg-blue-500"
-                onClick={() => console.log('fart')}>
+                onClick={async () => {
+                    try {
+                        const response = await signupOrLogin('/api/account/signup', username, password);
+                        //const response = await signup(username, password);
+                        if (response === 200) {
+                            navigate('/');
+                        }
+                    } catch (error) {
+                        // eslint-disable-next-line no-alert
+                        alert(error.message);
+                    }
+                }}>
                 Sign Up
             </button>
             <p> Already have an account? </p>
