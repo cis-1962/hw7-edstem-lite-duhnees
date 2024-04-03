@@ -17,6 +17,7 @@
     "turbo": "^1.11.2"
   },
   "devDependencies": {
-    "@types/cookie-session": "^2.0.48"
+    "@types/cookie-session": "^2.0.48",
+    "tailwindcss": "^3.4.3"
   }
 }

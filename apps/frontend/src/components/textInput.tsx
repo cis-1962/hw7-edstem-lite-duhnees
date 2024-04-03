@@ -10,7 +10,7 @@ export default function TextInput({ title, value, placeholder, onChange }: Input
         <div className="space-y-2">
             <p>{title}</p>
             <input
-                className="w-full border border-purple-700 rounded h-10"
+                className="border border-purple-700 rounded h-10 w-[300px]"
                 type="text"
                 value={value}
                 placeholder={placeholder}

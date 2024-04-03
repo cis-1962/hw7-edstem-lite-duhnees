@@ -1,7 +1,6 @@
 import { useState } from "react";
 import TextInput from "../components/textInput";
 import { Link, useNavigate } from "react-router-dom";
-//import { useSignUp } from "../util/fucking-whatever";
 import { useSignUpLogin } from "../util/signup-login";
 
 
@@ -9,12 +8,12 @@ export default function SignupPage() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    //const signup = useSignUp();
     const signupOrLogin = useSignUpLogin();
 
     return (
-        <div>
-            <h1> Sign Up </h1>
+        <div className="bg-pink-200 flex flex-col float-left p-6 fixed top-0 left-0 w-full h-full space-y-4">
+            <h1 className="font-serif text-4xl float-left"> 
+                Sign Up </h1>
             <TextInput 
                 title='Username'
                 value={username}
@@ -29,11 +28,10 @@ export default function SignupPage() {
             />
             <button
                 type="button"
-                className="btn bg-blue-500"
+                className="btn w-[300px] h-10 bg-purple-500 rounded"
                 onClick={async () => {
                     try {
                         const response = await signupOrLogin('/api/account/signup', username, password);
-                        //const response = await signup(username, password);
                         if (response === 200) {
                             navigate('/');
                         }
@@ -44,8 +42,10 @@ export default function SignupPage() {
                 }}>
                 Sign Up
             </button>
-            <p> Already have an account? </p>
-            <Link to="/login"> Log in here! </Link>
+            <div>
+                <p> Already have an account? </p>
+                <Link className="font-semibold text-purple-500" to="/login"> Log in here! </Link>
+            </div>
         </div>
     );
 }

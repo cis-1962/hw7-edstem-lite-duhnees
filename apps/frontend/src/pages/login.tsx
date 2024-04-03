@@ -10,8 +10,9 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     return (
-        <div>
-            <h1> Log In </h1>
+        <div className="bg-pink-200 flex flex-col float-left p-6 fixed top-0 left-0 w-full h-full space-y-4">
+            <h1 className="font-serif text-4xl float-left"> 
+                Log In </h1>
             <TextInput 
                 title='Username'
                 value={username}
@@ -26,11 +27,10 @@ export default function LoginPage() {
             />
             <button
                 type="button"
-                className="btn bg-blue-500"
+                className="btn w-[300px] h-10 bg-purple-500 rounded"
                 onClick={async () => {
                     try {
                         const response = await signupOrLogin('/api/account/login', username, password);
-                        //const response = await signup(username, password);
                         if (response === 200) {
                             navigate('/');
                         }
@@ -40,8 +40,10 @@ export default function LoginPage() {
                     }}}>
                 Log In
             </button>
-            <p> Don&apos;t have an account? </p>
-            <Link to="/signup"> Sign up here! </Link>
+            <div>
+                <p> Don&apos;t have an account? </p>
+                <Link className="font-semibold text-purple-500" to="/signup"> Sign up here! </Link>
+            </div>
         </div>
     );
 }

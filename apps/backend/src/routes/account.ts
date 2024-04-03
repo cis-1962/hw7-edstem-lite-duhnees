@@ -77,7 +77,7 @@ AuthRouter.get('', async (req, res, next) => {
   if (req.session && req.session.user && req.session.user.trim() !== '') {
     res.status(200).send(req.session.user);
 } else {
-    res.status(400).send('');
+    res.status(200).send('');
 }
 });
 
